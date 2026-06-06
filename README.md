@@ -1,8 +1,4 @@
-# linse
-
-# Screenshots
-![Screenshot-1.png](ss1.png)
-![Screenshot-2.png](ss2.png)
+# Linse
 
 Self-hosted photo sharing for events. Guests scan a QR code, pick a display name (no account, no password needed), and start uploading and browsing photos right away. The host defines tags, moderates uploads, and controls the look — all from a simple admin panel.
 
@@ -11,6 +7,10 @@ Self-hosted photo sharing for events. Guests scan a QR code, pick a display name
 - **Your data** — one Docker Compose stack (app + Postgres), everything stored in your own volumes.
 
 ---
+
+# Screenshots
+![Screenshot-1.png](ss1.png)
+![Screenshot-2.png](ss2.png)
 
 ## Install with Docker Compose
 
