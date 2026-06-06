@@ -1,0 +1,69 @@
+# linse — production compose file.
+# This is all you need to self-host. Copy it into an empty directory, add a .env
+# (see .env.example or the README), and run: docker compose up -d
+#
+# Overlays:
+#   compose.build.yml  — build the image from source instead of pulling
+#   compose.dev.yml    — hot-reload dev server (source checkout only)
+#   compose.caddy.yml  — attach to an external Caddy network (drop host port)
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: linse-db
+    environment:
+      POSTGRES_DB: linse
+      POSTGRES_USER: linse
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - linse_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U linse -d linse"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  fix-permissions:
+    image: busybox
+    volumes:
+      - linse_uploads:/data/uploads
+    command: chown -R 100:101 /data/uploads
+    restart: "no"
+
+  app:
+    image: ghcr.io/jmsz1996/linse-app:${LINSE_VERSION:-latest}
+    container_name: linse-app
+    environment:
+      DATABASE_URL: postgresql://linse:${POSTGRES_PASSWORD}@db:5432/linse
+      AUTH_SECRET: ${AUTH_SECRET}
+      LINSE_SECRET: ${LINSE_SECRET}
+      AUTH_TRUST_HOST: "true"
+      LINSE_INSECURE_COOKIES: "${LINSE_INSECURE_COOKIES:-false}"
+      HOST_ADMIN_EMAIL: ${HOST_ADMIN_EMAIL}
+      HOST_ADMIN_PASSWORD: ${HOST_ADMIN_PASSWORD}
+      UPLOAD_DIR: /data/uploads
+    ports:
+      - "${LINSE_PORT:-3000}:3000"
+    volumes:
+      - linse_uploads:/data/uploads
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    depends_on:
+      db:
+        condition: service_healthy
+      fix-permissions:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+# Named volumes hold all persistent state. Back them up before upgrades (see runbook.md).
+# Explicit `name:` prevents Docker from prefixing them with the project name.
+# WARNING: `docker compose down -v` DELETES these — use plain `down` to stop.
+volumes:
+  linse_pgdata:
+    name: linse_pgdata
+  linse_uploads:
+    name: linse_uploads

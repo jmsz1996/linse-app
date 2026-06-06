@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model HostUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  events       Event[]
+}
+
+model Event {
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  name         String
+  startsAt     DateTime?
+  endsAt       DateTime?
+  coverPhotoId        String?
+  hostUserId          String
+  createdAt           DateTime @default(now())
+  storageLimitMb      Int      @default(1024) // per-guest upload cap (MB), enforced per guest at upload; 0 = unlimited
+  allowVideos         Boolean  @default(false)
+  commentLimitPerHour Int      @default(30)
+  description         String?
+  footer              String?
+  accessPassword      String?  // null/empty = public; plaintext shared event code, embedded in the QR
+  themeOption1        String   @default("minimal")
+  themeOption2        String   @default("dark")
+  themeOption3        String   @default("glass")
+
+  hostUser     HostUser  @relation(fields: [hostUserId], references: [id])
+  tags         Tag[]
+  guests       Guest[]
+  photos       Photo[]
+}
+
+model Tag {
+  id        String  @id @default(cuid())
+  eventId   String
+  label     String
+  color     String?
+  sortOrder Int     @default(0)
+
+  event     Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  photoTags PhotoTag[]
+
+  @@unique([eventId, label])
+}
+
+model Guest {
+  id          String    @id @default(cuid())
+  eventId     String
+  displayName String
+  tokenHash   String
+  createdAt   DateTime  @default(now())
+  blockedAt   DateTime?
+
+  event    Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  photos   Photo[]
+  likes    Like[]
+  comments Comment[]
+
+  @@unique([eventId, tokenHash])
+  @@index([eventId, blockedAt])
+}
+
+model Photo {
+  id          String    @id @default(cuid())
+  eventId     String
+  guestId     String
+  storagePath String
+  thumbPath   String
+  width       Int
+  height      Int
+  mimeType    String
+  fileSize    Int       @default(0) // bytes of the stored original; counts toward the event storage cap
+  contentHash String?   // SHA-256 (hex) of the stored original; used to skip duplicate uploads within an event
+  uploadedAt  DateTime  @default(now())
+  hiddenAt    DateTime?
+
+  event     Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  guest     Guest      @relation(fields: [guestId], references: [id])
+  photoTags PhotoTag[]
+  likes     Like[]
+  comments  Comment[]
+
+  @@index([eventId, hiddenAt, uploadedAt(sort: Desc)])
+  @@index([eventId, contentHash])
+}
+
+model PhotoTag {
+  photoId String
+  tagId   String
+
+  photo Photo @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([photoId, tagId])
+}
+
+model Like {
+  photoId   String
+  guestId   String
+  createdAt DateTime @default(now())
+
+  photo Photo @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  guest Guest @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  @@id([photoId, guestId])
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  photoId   String
+  guestId   String
+  body      String
+  createdAt DateTime  @default(now())
+  hiddenAt  DateTime?
+
+  photo Photo @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  guest Guest @relation(fields: [guestId], references: [id], onDelete: Cascade)
+}

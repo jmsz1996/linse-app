@@ -1,0 +1,8 @@
+# Build overlay — builds the production image from source instead of pulling.
+# Use: docker compose -f compose.yml -f compose.build.yml up -d --build
+
+services:
+  app:
+    build:
+      context: .
+      target: runner

@@ -1,0 +1,11 @@
+# pnpm 10+ global settings (single-package repo, no `packages:` field needed).
+# Per https://pnpm.io/settings these moved out of package.json's `pnpm` field.
+# Allowlist for post-install build scripts (pnpm 10+ requires explicit approval).
+onlyBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
+  - '@tailwindcss/oxide'
+  - esbuild
+  - prisma
+  - sharp
+  - unrs-resolver

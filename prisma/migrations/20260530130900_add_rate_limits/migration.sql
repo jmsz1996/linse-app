@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Event" ADD COLUMN     "commentLimitPerHour" INTEGER NOT NULL DEFAULT 30,
+ADD COLUMN     "uploadLimitPerHour" INTEGER NOT NULL DEFAULT 10;

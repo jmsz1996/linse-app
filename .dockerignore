@@ -1,0 +1,31 @@
+.git
+.gitignore
+.dockerignore
+Dockerfile
+compose*.yml
+docker-compose*.yml
+README.md
+.claude
+.vscode
+.idea
+.editorconfig
+.prettierrc*
+
+# build / runtime artifacts
+.next
+node_modules
+data
+uploads
+postgres
+
+# env files (never bake into the image)
+.env
+.env.*
+
+# typescript build info
+*.tsbuildinfo
+next-env.d.ts
+
+# misc
+.DS_Store
+*.log

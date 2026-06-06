@@ -1,0 +1,16 @@
+# Operator overlay for self-hosters running an external Caddy reverse proxy.
+# Attaches the `app` service to an existing `caddy` docker network so Caddy
+# can reach `linse-app:3000` and terminates TLS at the edge.
+#
+# Use: `docker compose -f compose.yml -f compose.caddy.yml up -d`
+
+services:
+  app:
+    ports: !reset []
+    networks:
+      - default
+      - caddy
+
+networks:
+  caddy:
+    external: true

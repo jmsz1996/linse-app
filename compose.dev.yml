@@ -1,0 +1,20 @@
+# Developer overlay — bind-mounts the source and runs `next dev` with hot reload.
+# Use: docker compose -f compose.yml -f compose.dev.yml up -d --build
+
+services:
+  app:
+    image: ghcr.io/jmsz1996/linse-app:dev-local
+    build:
+      context: .
+      target: dev
+    ports: !override
+      - "3010:3000"
+    command: ["pnpm", "dev"]
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+
+  db:
+    ports:
+      - "127.0.0.1:5435:5432"
