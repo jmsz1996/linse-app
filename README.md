@@ -4,6 +4,10 @@
   <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="40">
 </a>
 
+# Screenshots
+[![Screenshot-2026-06-06-at-15-59-09.png](https://i.postimg.cc/28NVq9py/Screenshot-2026-06-06-at-15-59-09.png)](https://postimg.cc/nMTHgkhf)
+[![Screenshot-2026-06-06-at-16-05-34.png](https://i.postimg.cc/bNfsGVX2/Screenshot-2026-06-06-at-16-05-34.png)](https://postimg.cc/9z1WKpQW)
+
 Self-hosted photo sharing for events. Guests scan a QR code, pick a display name (no account, no password needed), and start uploading and browsing photos right away. The host defines tags, moderates uploads, and controls the look — all from a simple admin panel.
 
 - **Guests** — upload, browse, filter by tag, like, comment. New photos appear live, no refresh needed.
