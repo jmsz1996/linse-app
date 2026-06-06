@@ -1,12 +1,8 @@
 # linse
 
-<a href="https://buymeacoffee.com/jmsz1996">
-  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="40">
-</a>
-
 # Screenshots
-[![Screenshot-1.png](ss1.png)
-[![Screenshot-2.png](ss2.png)
+![Screenshot-1.png](ss1.png)
+![Screenshot-2.png](ss2.png)
 
 Self-hosted photo sharing for events. Guests scan a QR code, pick a display name (no account, no password needed), and start uploading and browsing photos right away. The host defines tags, moderates uploads, and controls the look — all from a simple admin panel.
 
@@ -138,3 +134,8 @@ Guest sessions are HttpOnly signed cookies — only the token hash is stored in 
 ## License
 
 [AGPL-3.0](./LICENSE). If you run a modified linse as a network service, you must make your source available to its users.
+
+<a href="https://buymeacoffee.com/jmsz1996">
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="40">
+</a>
+
