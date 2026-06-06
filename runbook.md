@@ -50,10 +50,10 @@ Tear down when done: `docker compose down` (keeps data) — see the warning belo
 
 ## Backups
 
-Persistent state lives in three named volumes: `linse_pgdata` (database),
-`linse_uploads` (photos), and `linse_exports` (originals written by the host
-"Export originals" action). The first two are the source of truth — `linse_exports`
-is derived (re-exportable from the app), so back it up only if you rely on it.
+Persistent state lives in two named volumes: `linse_pgdata` (database) and
+`linse_uploads` (photos). Back up both. (Exported originals live in the host
+`EXPORT_DIR` folder — derived data, re-exportable from the app, so cover it with
+your normal host backups only if you rely on it.)
 
 ```bash
 # Database (SQL dump)
@@ -62,10 +62,6 @@ docker compose exec -T db pg_dump -U linse linse > linse-db-$(date +%F).sql
 # Uploads (tarball of the volume)
 docker run --rm -v linse_uploads:/data -v "$PWD":/backup alpine \
   tar czf /backup/linse-uploads-$(date +%F).tgz -C /data .
-
-# Exports (optional — derived data)
-docker run --rm -v linse_exports:/data -v "$PWD":/backup alpine \
-  tar czf /backup/linse-exports-$(date +%F).tgz -C /data .
 ```
 
 ## Restore
@@ -107,9 +103,9 @@ The seed step re-runs on boot and upserts the host account with the new password
 ## Troubleshooting
 
 **⚠ `docker compose down -v` deletes all data.** With named volumes, `-v` removes
-`linse_pgdata`, `linse_uploads`, and `linse_exports` — database, photos, and any
-exported originals gone. Use plain `docker compose down` to stop. Only use `-v`
-when you intend to wipe everything.
+`linse_pgdata` and `linse_uploads` — database and photos gone. (The `EXPORT_DIR`
+folder is a host bind mount, so it survives.) Use plain `docker compose down` to
+stop. Only use `-v` when you intend to wipe everything.
 
 **App won't become healthy.** Check logs: `docker compose logs app`. The app waits
 for the database (`depends_on: service_healthy`) and runs migrations on boot, so
@@ -155,17 +151,14 @@ services:
   app:
     volumes:
       - /srv/linse/uploads:/data/uploads
-      - /srv/linse/exports:/data/exports
-  fix-permissions-exports:
-    volumes:
-      - /srv/linse/exports:/data/exports
 ```
 
 `docker compose up -d` picks up the override automatically. (Bind mounts survive
 `down -v`, unlike named volumes.)
 
-**Browsing exports on the host.** The host "Export originals" action writes into
-`EXPORT_DIR` (default `/data/exports`). Bind-mounting it (as above) is the point of
-the feature — the originals land at `/srv/linse/exports/<event name>/001.jpg …`. Note
-the app writes as uid/gid `100:101`, so exported files are owned by `100:101`:
-readable, but you'll need `sudo` (or a `chown`) to delete them from the host.
+**Exported originals** already land on the host by default — no override needed. Set
+`EXPORT_DIR` in `.env` to any path on the machine (default `./exports`, resolved next
+to the compose file); the host "Export originals" action then writes there as
+`<EXPORT_DIR>/<event name>/001.jpg …`. The app writes as uid/gid `100:101`, so
+exported files are owned by `100:101`: readable, but you'll need `sudo` (or a
+`chown`) to delete them from the host.

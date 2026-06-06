@@ -75,11 +75,11 @@ All config is via environment variables. The ones marked **required** need to be
 | `LINSE_PORT` | no | `3000` | Port exposed on the host |
 | `LINSE_VERSION` | no | `latest` | Image tag to pull (e.g. `v0.1.0`) |
 | `UPLOAD_DIR` | no | `/data/uploads` | In-container path for uploaded photos |
-| `EXPORT_DIR` | no | `/data/exports` | In-container target for the host "Export originals" action |
+| `EXPORT_DIR` | no | `./exports` | Host folder the "Export originals" action writes to |
 
-Persistent data lives in three named Docker volumes: `linse_pgdata` (database), `linse_uploads` (photos), and `linse_exports` (originals written by the host "Export originals" action).
+Persistent data lives in two named Docker volumes: `linse_pgdata` (database) and `linse_uploads` (photos). Exported originals are written to the host folder set by `EXPORT_DIR` (default `./exports`) — a bind mount, not a Docker volume.
 
-> ⚠️ `docker compose down -v` deletes all three volumes — meaning all your data. Use plain `docker compose down` to just stop the containers.
+> ⚠️ `docker compose down -v` deletes both volumes — meaning all your data. (Your `EXPORT_DIR` folder is a host bind mount and is left untouched.) Use plain `docker compose down` to just stop the containers.
 
 ---
 

@@ -37,7 +37,7 @@ services:
   fix-permissions-exports:
     image: busybox
     volumes:
-      - linse_exports:/data/exports
+      - ${EXPORT_DIR:-./exports}:/data/exports
     command: chown -R 100:101 /data/exports
     restart: "no"
     # networks:
@@ -55,12 +55,11 @@ services:
       HOST_ADMIN_EMAIL: ${HOST_ADMIN_EMAIL}
       HOST_ADMIN_PASSWORD: ${HOST_ADMIN_PASSWORD}
       UPLOAD_DIR: /data/uploads
-      EXPORT_DIR: /data/exports
     ports:
       - "${LINSE_PORT:-3000}:3000"
     volumes:
       - linse_uploads:/data/uploads
-      - linse_exports:/data/exports
+      - ${EXPORT_DIR:-./exports}:/data/exports
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
       interval: 10s
@@ -87,8 +86,6 @@ volumes:
     name: linse_pgdata
   linse_uploads:
     name: linse_uploads
-  linse_exports:
-    name: linse_exports
 
 # You can add a reverse proxy as well. 
 # networks:
