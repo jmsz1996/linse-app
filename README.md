@@ -5,8 +5,8 @@
 </a>
 
 # Screenshots
-[![Screenshot-2026-06-06-at-15-59-09.png](https://i.postimg.cc/28NVq9py/Screenshot-2026-06-06-at-15-59-09.png)](https://postimg.cc/nMTHgkhf)
-[![Screenshot-2026-06-06-at-16-05-34.png](https://i.postimg.cc/bNfsGVX2/Screenshot-2026-06-06-at-16-05-34.png)](https://postimg.cc/9z1WKpQW)
+[![Screenshot-1.png](ss1.png)
+[![Screenshot-2.png](ss2.png)
 
 Self-hosted photo sharing for events. Guests scan a QR code, pick a display name (no account, no password needed), and start uploading and browsing photos right away. The host defines tags, moderates uploads, and controls the look — all from a simple admin panel.
 
