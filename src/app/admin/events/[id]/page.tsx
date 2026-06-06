@@ -12,6 +12,8 @@ import { TagManager } from "@/components/admin/tag-manager";
 import { PhotoModerationGrid } from "@/components/admin/photo-moderation-grid";
 import { GuestList } from "@/components/admin/guest-list";
 import { DeleteEventButton } from "@/components/admin/delete-event-button";
+import { ExportOriginalsSection } from "@/components/admin/export-originals-section";
+import { exportFolderName } from "@/lib/export";
 
 export const dynamic = "force-dynamic";
 
@@ -218,6 +220,22 @@ export default async function EventDetailPage({
           blockedAt: g.blockedAt?.toISOString() ?? null,
         }))}
       />
+
+      <Separator className="my-8" />
+
+      {/* Export originals */}
+      <section>
+        <h2 className="text-base font-semibold mb-1">Export originals</h2>
+        <p className="text-sm text-muted-foreground mb-4">
+          Copy this event&apos;s original photos and videos into the host export folder, organized
+          as{" "}
+          <code className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
+            {exportFolderName(event.name, event.slug)}/001.jpg
+          </code>
+          . Move does the same, then removes them from the app.
+        </p>
+        <ExportOriginalsSection eventId={event.id} eventName={event.name} />
+      </section>
 
       <Separator className="my-8" />
 

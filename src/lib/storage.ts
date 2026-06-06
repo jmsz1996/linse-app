@@ -6,6 +6,16 @@ export function storagePath(...parts: string[]): string {
   return path.join(env.UPLOAD_DIR, ...parts);
 }
 
+// Resolves a path under EXPORT_DIR — the host-facing folder the "Export
+// originals" host action writes original media into (separate from UPLOAD_DIR).
+export function exportPath(...parts: string[]): string {
+  return path.join(env.EXPORT_DIR, ...parts);
+}
+
+export async function ensureExportDir(...parts: string[]): Promise<void> {
+  await mkdir(exportPath(...parts), { recursive: true });
+}
+
 export async function ensureDir(...parts: string[]): Promise<void> {
   await mkdir(storagePath(...parts), { recursive: true });
 }

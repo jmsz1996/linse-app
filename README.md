@@ -7,7 +7,7 @@
 Self-hosted photo sharing for events. Guests scan a QR code, pick a display name (no account, no password needed), and start uploading and browsing photos right away. The host defines tags, moderates uploads, and controls the look — all from a simple admin panel.
 
 - **Guests** — upload, browse, filter by tag, like, comment. New photos appear live, no refresh needed.
-- **Host** — create events, define tags, print the QR code, hide or delete photos, manage guests.
+- **Host** — create events, define tags, print the QR code, hide or delete photos, manage guests, export originals to a host folder.
 - **Your data** — one Docker Compose stack (app + Postgres), everything stored in your own volumes.
 
 ---
@@ -75,10 +75,11 @@ All config is via environment variables. The ones marked **required** need to be
 | `LINSE_PORT` | no | `3000` | Port exposed on the host |
 | `LINSE_VERSION` | no | `latest` | Image tag to pull (e.g. `v0.1.0`) |
 | `UPLOAD_DIR` | no | `/data/uploads` | In-container path for uploaded photos |
+| `EXPORT_DIR` | no | `/data/exports` | In-container target for the host "Export originals" action |
 
-Persistent data lives in two named Docker volumes: `linse_pgdata` (database) and `linse_uploads` (photos).
+Persistent data lives in three named Docker volumes: `linse_pgdata` (database), `linse_uploads` (photos), and `linse_exports` (originals written by the host "Export originals" action).
 
-> ⚠️ `docker compose down -v` deletes both volumes — meaning all your data. Use plain `docker compose down` to just stop the containers.
+> ⚠️ `docker compose down -v` deletes all three volumes — meaning all your data. Use plain `docker compose down` to just stop the containers.
 
 ---
 

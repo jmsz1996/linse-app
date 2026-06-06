@@ -22,6 +22,8 @@ services:
       interval: 5s
       retries: 10
     restart: unless-stopped
+    # networks:
+    #   - caddy
 
   fix-permissions:
     image: busybox
@@ -29,6 +31,17 @@ services:
       - linse_uploads:/data/uploads
     command: chown -R 100:101 /data/uploads
     restart: "no"
+    # networks:
+    #   - caddy
+
+  fix-permissions-exports:
+    image: busybox
+    volumes:
+      - linse_exports:/data/exports
+    command: chown -R 100:101 /data/exports
+    restart: "no"
+    # networks:
+    #   - caddy
 
   app:
     image: ghcr.io/jmsz1996/linse-app:${LINSE_VERSION:-latest}
@@ -42,10 +55,12 @@ services:
       HOST_ADMIN_EMAIL: ${HOST_ADMIN_EMAIL}
       HOST_ADMIN_PASSWORD: ${HOST_ADMIN_PASSWORD}
       UPLOAD_DIR: /data/uploads
+      EXPORT_DIR: /data/exports
     ports:
       - "${LINSE_PORT:-3000}:3000"
     volumes:
       - linse_uploads:/data/uploads
+      - linse_exports:/data/exports
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
       interval: 10s
@@ -57,7 +72,12 @@ services:
         condition: service_healthy
       fix-permissions:
         condition: service_completed_successfully
+      fix-permissions-exports:
+        condition: service_completed_successfully
     restart: unless-stopped
+    # networks:
+    #   - caddy
+
 
 # Named volumes hold all persistent state. Back them up before upgrades (see runbook.md).
 # Explicit `name:` prevents Docker from prefixing them with the project name.
@@ -67,3 +87,10 @@ volumes:
     name: linse_pgdata
   linse_uploads:
     name: linse_uploads
+  linse_exports:
+    name: linse_exports
+
+# You can add a reverse proxy as well. 
+# networks:
+#   caddy:
+#     external: True

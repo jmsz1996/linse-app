@@ -7,6 +7,7 @@ const schema = z.object({
   HOST_ADMIN_EMAIL: z.string().email(),
   HOST_ADMIN_PASSWORD: z.string().min(8),
   UPLOAD_DIR: z.string().default("/data/uploads"),
+  EXPORT_DIR: z.string().default("/data/exports"),
 });
 
 type Env = z.infer<typeof schema>;
